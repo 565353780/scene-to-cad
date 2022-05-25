@@ -114,7 +114,7 @@ roslaunch panoptic_mapping_pipeline scenenn_pano_mapping.launch sequence:=sceneN
 ```
 
 ```bash
-rosbag play -r 0.5 ~/.ros/scenenn/scene_225.bag
+rosbag play -r 0.5 ~/.ros/scenenn/scenenn_225.bag
 ```
 
 ```bash
