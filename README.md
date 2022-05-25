@@ -48,9 +48,13 @@ catkin build panoptic_mapping_pipeline map_proc scene_builder gazebo_simulation
 ## Download
 
 ```bash
+https://drive.google.com/file/d/1_4-gcVnPx9S-woaQVBHSTEpW7bX4yRNW/view?usp=sharing
+->
+~/.ros/scenenn/scenenn_255.bag
+
 https://drive.google.com/file/d/1cQ_bwdK7-jyIUMsteClNdiXIZWrYT5cX/view?usp=sharing
 ->
-scene2cad_ws/src/Interactive-Scene-Reconstruction/cad_dataset/
+scene2cad_ws/src/Interactive-Scene-Reconstruction/
 
 https://drive.google.com/file/d/1P2fgpqfWpkhg-CFKS3YpXGP70aKf9tTe/view?usp=sharing
 ->
@@ -60,8 +64,29 @@ scene2cad_ws/src/Interactive-Scene-Reconstruction/output/
 make sure it looks like
 
 ```bash
-output/
-  sceneNN_*/
+scene2cad_ws/src/Interactive-Scene-Reconstruction/
+  cad_dataset/
+    rigid_object/
+      xxx.obj
+      xxx.mtl
+      xxx.png
+      ...
+    articulated_object/
+      fridge_0001/
+        xxx.obj
+        xxx.mtl
+        xxx.urdf
+        xxx.xacro
+        ...
+      fridge_0002/
+      ...
+    gazebo_world/
+      ...
+```
+
+```bash
+scene2cad_ws/src/Interactive-Scene-Reconstruction/output/
+  sceneNN_test/
     contact_graph/
       contact_graph_cad.json
       ...
@@ -74,13 +99,48 @@ and run
 
 ```bash
 source devel/setup.zsh
-roslaunch scene_builder generate_xacro_scene.launch scene_name:=sceneNN_test
+roslaunch scene_builder generate_xacro_scene.launch scene_name:=sceneNN_test enable_physics:=true enable_gazebo:=true
+roslaunch scene_builder generate_gazebo_world.launch scene_name:=sceneNN_test
 ```
+
+NOTE: when it shows "[OK]", use Ctrl+C to kill the process.
 
 ## Run
 
-```bash
+### Scene Visualization
 
+```bash
+roslaunch scene_builder view_scene.launch scene:=sceneNN_test
+```
+
+### Launch the map processing node
+
+```bash
+roslaunch map_proc map_processing.launch sequence:=sceneNN_test
+```
+
+### Visualize contact graph
+
+```bash
+cd src/Interactive-Scene-Reconstruction
+python cad_replacement/pg_map_ros/pg_map_ros/pg_viewer/launch_viewer.py -c output/sceneNN_test/contact_graph/contact_graph_cad.json
+cd ../..
+```
+
+### Load Gazebo
+
+```bash
+roslaunch gazebo_simulation gazebo_world.launch scene_name:="sceneNN_test" enable_robot:="false"
+```
+
+### Run Mapping on SceneNN Dataset
+
+```bash
+python src/Interactive-Scene-Reconstruction/mapping/rp_server/launch_detectron_server.py
+```
+
+```bash
+roslaunch panoptic_mapping_pipeline scenenn_pano_mapping.launch sequence:=sceneNN_test
 ```
 
 ## Enjoy it~
