@@ -50,49 +50,15 @@ catkin build panoptic_mapping_pipeline map_proc scene_builder gazebo_simulation
 ```bash
 https://drive.google.com/file/d/1_4-gcVnPx9S-woaQVBHSTEpW7bX4yRNW/view?usp=sharing
 ->
-~/.ros/scenenn/scenenn_255.bag
+scene2cad_ws/src/Interactive-Scene-Reconstruction/bag/scene_225.bag
 
 https://drive.google.com/file/d/1cQ_bwdK7-jyIUMsteClNdiXIZWrYT5cX/view?usp=sharing
 ->
-scene2cad_ws/src/Interactive-Scene-Reconstruction/
+scene2cad_ws/src/Interactive-Scene-Reconstruction/cad_dataset/
 
 https://drive.google.com/file/d/1P2fgpqfWpkhg-CFKS3YpXGP70aKf9tTe/view?usp=sharing
 ->
-scene2cad_ws/src/Interactive-Scene-Reconstruction/output/
-```
-
-make sure it looks like
-
-```bash
-scene2cad_ws/src/Interactive-Scene-Reconstruction/
-  cad_dataset/
-    rigid_object/
-      xxx.obj
-      xxx.mtl
-      xxx.png
-      ...
-    articulated_object/
-      fridge_0001/
-        xxx.obj
-        xxx.mtl
-        xxx.urdf
-        xxx.xacro
-        ...
-      fridge_0002/
-      ...
-    gazebo_world/
-      ...
-```
-
-```bash
-scene2cad_ws/src/Interactive-Scene-Reconstruction/output/
-  sceneNN_test/
-    contact_graph/
-      contact_graph_cad.json
-      ...
-    panoptic_segments/
-      1.ply
-      ...
+scene2cad_ws/src/Interactive-Scene-Reconstruction/output/sceneNN_test/
 ```
 
 and run
@@ -140,7 +106,20 @@ python src/Interactive-Scene-Reconstruction/mapping/rp_server/launch_detectron_s
 ```
 
 ```bash
+# use_GT
 roslaunch panoptic_mapping_pipeline scenenn_pano_mapping.launch sequence:=sceneNN_test
+or
+# compute_localization
+roslaunch panoptic_mapping_pipeline scenenn_pano_mapping.launch sequence:=sceneNN_test compute_localization:=true use_GT_pose:=false
+```
+
+```bash
+rosbag play -r 0.5 ~/.ros/scenenn/scene_225.bag
+```
+
+```bash
+rosservice call /gsm_node/generate_mesh
+rosservice call /gsm_node/extract_instances
 ```
 
 ## Enjoy it~
